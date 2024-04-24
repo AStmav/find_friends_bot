@@ -7,9 +7,12 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 from utils.commands import set_commands
 from handlers.start import get_start
-from handlers.register import start_register, register_name, register_phone
+from handlers.create import create
+from handlers.register import start_register, register_name, register_phone, register_geo
 from state.register import RegisterState
 from aiogram.filters import Command
+from fiters.CheckAdmin import CheckAdmin
+
 
 load_dotenv()
 
@@ -20,7 +23,7 @@ dp = Dispatcher(storage=MemoryStorage())  # все данные бота буд�
 
 
 async def start_bot():
-    await bot.send_message(admin_id, text="Бот запущен")
+    await bot.send_message(1320680053, text="Бот запущен")
 
 dp.startup.register(start_bot)
 dp.message.register(get_start, Command(commands='start'))
@@ -29,6 +32,11 @@ dp.message.register(get_start, Command(commands='start'))
 dp.message.register(start_register, F.text=="Зарегестрироваться")
 dp.message.register(register_name, RegisterState.regName)
 dp.message.register(register_phone, RegisterState.regPhone)
+dp.message.register(register_geo, RegisterState.regGeo)
+
+
+#Регистрируем хэндлер для админа
+dp.message.register(create, Command(commands='create'), CheckAdmin())
 async def start():
     await set_commands(bot)
     try:

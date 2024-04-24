@@ -13,14 +13,15 @@ class Database():
                      "id INTEGER PRIMARY KEY,"
                      "user_name TEXT,"
                      "user_phone TEXT,"
+                     "user_geo FLOAT,"
                      "telegram_id TEXT);")
             self.cursor.execute(query)
             self.connection.commit()
         except sqlite3.Error as Error:
             print("Ошибка при создании:", Error)
 
-    def add_user (self, user_name, user_phone, telegram_id):
-        self.cursor.execute(f"INSERT INTO users (user_name, user_phone, telegram_id) VALUES (?, ?, ?)", (user_name, user_phone, telegram_id))
+    def add_user (self, user_name, user_phone, user_geo, telegram_id):
+        self.cursor.execute(f"INSERT INTO users (user_name, user_phone, user_geo, telegram_id) VALUES (?, ?, ?, ?)", (user_name, user_phone, user_geo, telegram_id))
         self.connection.commit()
 
     def select_users_id(self,telegram_id):
