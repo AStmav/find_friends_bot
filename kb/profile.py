@@ -6,4 +6,4 @@ profile_kb = ReplyKeyboardMarkup(keyboard=[
             text='Найти друзей'
         )
     ]
-], resize_keyboard=True, one_time_keyboard=True)
+], resize_keyboard=True, one_time_keyboard=True, input_field_placeholder="Для поиска друзей нажми на кнопку")
