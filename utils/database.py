@@ -35,11 +35,19 @@ class Database():
 
     def select_places_all(self):
         try:
-            self.cursor.execute("SELECT user_geo FROM users")
+            self.cursor.execute("SELECT user_name, user_geo FROM users")
             result = self.cursor.fetchall() #тестово извлекаем все координаты всех пользователей
             return result
         except sqlite3.Error as Error:
             print("Ошибка при выполнении запроса:", Error)
+
+    def update_user_geo(self, user_id, new_geo):
+        try:
+            query = "UPDATE users SET user_geo = ? WHERE telegram_id = ?"
+            self.cursor.execute(query, (new_geo, user_id))
+            self.connection.commit()
+        except sqlite3.Error as error:
+            print("Ошибка при обновлении данных геопозиции:", error)
     def __del__(self): #закрытие соединения
         self.cursor.close()
         self.connection.close()

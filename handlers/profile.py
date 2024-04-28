@@ -34,7 +34,10 @@ async def places_all(msg: Message, state: FSMContext, bot: Bot):
 
     # Проверка расстояния между пользователями
     for geo in all_geo:
-        geo_values = geo[0].split(',')
+        geo_values = geo[1].split(',')  # Извлекаем координаты из кортежа
+        geo_name = geo[0]  # Имя пользователя
+        if geo[1] == user_geo_str[0]:
+            continue  # Пропустить свои координаты
         lat2 = radians(float(geo_values[0]))
         lon2 = radians(float(geo_values[1]))
 
@@ -48,36 +51,14 @@ async def places_all(msg: Message, state: FSMContext, bot: Bot):
         distance = R * c
 
         if distance <= 1.0:
-            friends.append(geo)  # Добавляем пользователя в список друзей
+            friends.append(geo_name)  # Добавляем пользователя в список друзей
+
 
     # Отправка сообщения о друзьях рядом
     if friends:
-        friend_names = ", ".join([friend[0] for friend in friends])
-        await bot.send_message(msg.from_user.id, f"Друзья рядом: {friend_names}")
+         # Убираем координаты пользователя # Убираем координаты пользователя
+        await bot.send_message(msg.from_user.id, f"Друзья рядом : {friends}")
     else:
-        await bot.send_message(msg.from_user.id, "Друзей рядом не найдено.")
+        await bot.send_message(msg.from_user.id, "Друзей рядом нет.")
 
 
-# # Широта и долгота пользователя
-# user_lat = 55.751244
-# user_lon = 37.618423
-#
-# # Получение списка пользователей из базы данных (это просто пример)
-# # Здесь вы должны получить список пользователей с их координатами из базы данных
-# users = [
-#     {'user_id': 1, 'latitude': 55.7558, 'longitude': 37.6173},
-#     {'user_id': 2, 'latitude': 55.7522, 'longitude': 37.6156},
-#     {'user_id': 3, 'latitude': 55.7575, 'longitude': 37.6204},
-#     # Другие пользователи...
-# ]
-#
-# # Находим пользователей, находящихся в радиусе 1 км от указанной точки
-# users_in_radius = []
-# for user in users:
-#     distance = calculate_distance(user_lat, user_lon, user['latitude'], user['longitude'])
-#     if distance <= 1.0:
-#         users_in_radius.append(user)
-#
-# # Выводим пользователей, находящихся в радиусе 1 км
-# for user in users_in_radius:
-#     print(f"Пользователь с ID {user['user_id']} находится в радиусе 1 км.")

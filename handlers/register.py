@@ -2,6 +2,7 @@ from aiogram import Bot
 from aiogram.types import Message,location
 from aiogram.fsm.context import FSMContext
 from state.register import RegisterState
+from kb.send_location import location_kb
 import re
 import os
 from utils.database import Database
@@ -42,6 +43,7 @@ async def register_phone(msg:Message, state:FSMContext, bot:Bot):
 async def register_geo(msg:Message, state:FSMContext, bot:Bot):
     latitude = msg.location.latitude
     longitude = msg.location.longitude
+    await bot.send_location(msg.chat.id, latitude, longitude)
     await bot.send_message(msg.from_user.id, f"Широта: {latitude}, Долгота: {longitude}")
     await state.update_data(latitude=latitude, longitude=longitude)
 
@@ -57,6 +59,7 @@ async def register_geo(msg:Message, state:FSMContext, bot:Bot):
     db.add_user(reg_name,reg_phone,reg_geo, msg.from_user.id)
 
     await state.clear()
+
 
 
 
