@@ -2,13 +2,14 @@ import asyncio
 import logging
 import os
 from aiogram import Bot, Dispatcher, F
+from aiogram.types import ContentType
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from dotenv import load_dotenv
 from utils.commands import set_commands
 from handlers.start import get_start
 from handlers.register import start_register, register_name, register_phone, register_geo
-from handlers.update_location import update_location, check_friend
+from handlers.update_location import check_friend
 from handlers.profile import places_all
 from state.register import RegisterState
 from aiogram.filters import Command
@@ -29,18 +30,21 @@ async def start_bot():
 dp.startup.register(start_bot)
 dp.message.register(get_start, Command(commands='start'))
 
+#Регистрируем хендлер для запроса на акутальную геолокацию
+
+dp.message.register(check_friend, F.content_type.in_({ContentType.LOCATION}))
+
 #Регистрируем хэнжлер регистрации
-dp.message.register(start_register, F.text=="Зарегестрироваться")
+dp.message.register(start_register, F.text=='Зарегестрироваться')
 dp.message.register(register_name, RegisterState.regName)
 dp.message.register(register_phone, RegisterState.regPhone)
 dp.message.register(register_geo, RegisterState.regGeo)
 
 #Регистрируем хэндлер для поиска друзей(обновляем геопозицию пользователя)
-dp.message.register(places_all)
 
-#Регистрируем хендлер для запроса на акутальную геолокацию
-dp.message.register(check_friend)
-dp.message.register(update_location)
+#dp.message.register(places_all, F.text=='Найти друзей')
+dp.callback_query.register(places_all, F.data.startswith('find_friends'))
+
 #Регистрируем хэндлер для админа
 #dp.message.register(create, Command(commands='create'), CheckAdmin())
 async def start():

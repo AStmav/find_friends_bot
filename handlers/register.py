@@ -6,6 +6,7 @@ from kb.send_location import location_kb
 import re
 import os
 from utils.database import Database
+from kb.send_location import location_kb
 
 
 
@@ -32,7 +33,7 @@ async def register_phone(msg:Message, state:FSMContext, bot:Bot):
         await state.update_data(register_phone=msg.text)
         msg_success = (f"Ваш номер телефон:{msg.text} \n"
                        f"Теперь укажите Вашу геолокацию 🌍 чтобы я помог Вам найти друзей рядом с Вами")
-        await bot.send_message(msg.from_user.id,msg_success)
+        await bot.send_message(msg.from_user.id,msg_success, reply_markup=location_kb)
         await state.update_data(register_phone=msg.text)
         await state.set_state(RegisterState.regGeo)
 

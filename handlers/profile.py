@@ -1,25 +1,22 @@
 import math
 import os
 from aiogram import Bot
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from utils.database import Database
 from math import radians, sin, cos, sqrt, atan2
 
 
-# async def places_all(msg:Message, state:FSMContext, bot:Bot):
-#     db = Database(os.getenv('DATABASE_NAME'))
-#     places = db.select_places_all()
-#     await bot.send_message(msg.from_user.id, f"Это все друзья рядом:{places}")
 
 
-async def places_all(msg: Message, state: FSMContext, bot: Bot):
+
+async def places_all(call:CallbackQuery, state: FSMContext, bot: Bot):
     db = Database(os.getenv('DATABASE_NAME'))
 
     # Получение местоположения пользователя
-    user_geo_str = db.select_place_user(msg.from_user.id)
+    user_geo_str = db.select_place_user(call.from_user.id)
     if not user_geo_str:
-        await bot.send_message(msg.from_user.id, "Местоположение пользователя не найдено.")
+        await bot.send_message(call.from_user.id, "Местоположение пользователя не найдено.")
         return
 
     user_geo_values = user_geo_str[0].split(',')
@@ -57,8 +54,8 @@ async def places_all(msg: Message, state: FSMContext, bot: Bot):
     # Отправка сообщения о друзьях рядом
     if friends:
          # Убираем координаты пользователя # Убираем координаты пользователя
-        await bot.send_message(msg.from_user.id, f"Друзья рядом : {friends}")
+        await bot.send_message(call.from_user.id, f"Друзья рядом : {friends}")
     else:
-        await bot.send_message(msg.from_user.id, "Друзей рядом нет.")
+        await bot.send_message(call.from_user.id, "Друзей рядом нет.")
 
 
