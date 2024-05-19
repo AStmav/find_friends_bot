@@ -35,7 +35,7 @@ class Database():
 
     def select_places_all(self):
         try:
-            self.cursor.execute("SELECT user_name, user_geo FROM users")
+            self.cursor.execute("SELECT user_name, user_geo, telegram_id FROM users")
             result = self.cursor.fetchall() #тестово извлекаем все координаты всех пользователей
             return result
         except sqlite3.Error as Error:

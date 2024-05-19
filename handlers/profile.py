@@ -2,6 +2,7 @@ import math
 import os
 from aiogram import Bot
 from aiogram.types import Message, CallbackQuery
+from aiogram.utils.keyboard import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from utils.database import Database
 from math import radians, sin, cos, sqrt, atan2
@@ -33,7 +34,10 @@ async def places_all(call:CallbackQuery, state: FSMContext, bot: Bot):
     for geo in all_geo:
         geo_values = geo[1].split(',')  # Извлекаем координаты из кортежа
         geo_name = geo[0]  # Имя пользователя
+        geo_id_user = geo[2] #id телеграмм
         if geo[1] == user_geo_str[0]:
+            your_name = geo[0]
+            your_id = geo[2]
             continue  # Пропустить свои координаты
         lat2 = radians(float(geo_values[0]))
         lon2 = radians(float(geo_values[1]))
@@ -49,13 +53,19 @@ async def places_all(call:CallbackQuery, state: FSMContext, bot: Bot):
 
         if distance <= 1.0:
             friends.append(geo_name)  # Добавляем пользователя в список друзей
+            button_text = f'Отправить привет {geo_name}'
+            button_data = f'say_hello_{geo_id_user}'
+            find_friends_kb = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text=button_text, callback_data=button_data)]
+            ])
 
 
     # Отправка сообщения о друзьях рядом
     if friends:
          # Убираем координаты пользователя # Убираем координаты пользователя
-        await bot.send_message(call.from_user.id, f"Друзья рядом : {friends}")
+        await bot.send_message(call.from_user.id, f"Выберите друга для отправки привета:", reply_markup=find_friends_kb)
     else:
         await bot.send_message(call.from_user.id, "Друзей рядом нет.")
+    return your_name, your_id
 
 

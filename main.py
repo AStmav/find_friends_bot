@@ -10,12 +10,14 @@ from utils.commands import set_commands
 from handlers.start import get_start
 from handlers.register import start_register, register_name, register_phone, register_geo
 from handlers.update_location import check_friend
+from handlers.say_hello import callback_say_hello
 from handlers.profile import places_all
+from handlers.create_chat import start_chat_friends
 from state.register import RegisterState
 from aiogram.filters import Command
 from fiters.CheckAdmin import CheckAdmin
 
-
+logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode="HTML")
@@ -41,9 +43,13 @@ dp.message.register(register_phone, RegisterState.regPhone)
 dp.message.register(register_geo, RegisterState.regGeo)
 
 #Регистрируем хэндлер для поиска друзей(обновляем геопозицию пользователя)
-
-#dp.message.register(places_all, F.text=='Найти друзей')
 dp.callback_query.register(places_all, F.data.startswith('find_friends'))
+
+#Отправляем  пользователю приветственное сообщение
+dp.callback_query.register(callback_say_hello, lambda c: c.data.startswith('say_hello_'))
+
+#Создать чат между двух пользователей
+dp.callback_query.register(start_chat_friends, F.data.startswith('start_chat'))
 
 #Регистрируем хэндлер для админа
 #dp.message.register(create, Command(commands='create'), CheckAdmin())
