@@ -5,6 +5,7 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import ContentType
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.dispatcher import middlewares
 from dotenv import load_dotenv
 from utils.commands import set_commands
 from handlers.start import get_start
@@ -12,18 +13,18 @@ from handlers.register import start_register, register_name, register_phone, reg
 from handlers.update_location import check_friend
 from handlers.say_hello import callback_say_hello
 from handlers.profile import places_all
-from handlers.create_chat import start_chat_friends
+from handlers.create_chat import start_chat_friends, relay_message
 from state.register import RegisterState
 from aiogram.filters import Command
 from fiters.CheckAdmin import CheckAdmin
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 bot = Bot(token=os.getenv("BOT_TOKEN"), parse_mode="HTML")
 admin_id = os.getenv("ADMIN_ID")
 dp = Dispatcher(storage=MemoryStorage())  # все данные бота будут сохранятся в бд
-
 
 
 async def start_bot():
@@ -50,7 +51,7 @@ dp.callback_query.register(callback_say_hello, lambda c: c.data.startswith('say_
 
 #Создать чат между двух пользователей
 dp.callback_query.register(start_chat_friends, F.data.startswith('start_chat'))
-
+dp.message.register(relay_message,F.content_type == ContentType.TEXT)
 #Регистрируем хэндлер для админа
 #dp.message.register(create, Command(commands='create'), CheckAdmin())
 async def start():
