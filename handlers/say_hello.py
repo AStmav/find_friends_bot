@@ -16,6 +16,8 @@ async def callback_say_hello(call:CallbackQuery,  bot: Bot): # Обработч�
         print(your_name, your_id)
 
         if your_id:
+            db = Database(os.getenv('DATABASE_NAME'))
+            db.save_user_id_chat(your_id, user_id)
             button_text = 'Начать общение'
             button_data = 'start_chat'
             button_start_chat = InlineKeyboardMarkup(inline_keyboard=[

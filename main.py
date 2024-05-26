@@ -14,6 +14,7 @@ from handlers.update_location import check_friend
 from handlers.say_hello import callback_say_hello
 from handlers.profile import places_all
 from handlers.create_chat import start_chat_friends, relay_message
+from handlers.delete_chat import end_chat
 from state.register import RegisterState
 from aiogram.filters import Command
 from fiters.CheckAdmin import CheckAdmin
@@ -51,9 +52,12 @@ dp.callback_query.register(callback_say_hello, lambda c: c.data.startswith('say_
 
 #Создать чат между двух пользователей
 dp.callback_query.register(start_chat_friends, F.data.startswith('start_chat'))
-dp.message.register(relay_message,F.content_type == ContentType.TEXT)
-#Регистрируем хэндлер для админа
-#dp.message.register(create, Command(commands='create'), CheckAdmin())
+dp.message.register(relay_message, F.content_type == ContentType.TEXT)
+
+#Завершить чат между пользователями
+dp.callback_query.register(end_chat, F.data.startswith('end_chat'))
+
+
 async def start():
     await set_commands(bot)
     try:
