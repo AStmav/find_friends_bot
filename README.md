@@ -26,11 +26,13 @@
 ```bash
 git clone https://github.com/your_username/telegram-bot
 cd telegram-bot
+```
 
 ### 2. Установка зависимостей
 
 ```bash
 pip install -r requirements.txt
+```
 
 ### 3. Настройка окружения
 
@@ -39,4 +41,5 @@ pip install -r requirements.txt
 ```bash
 TELEGRAM_TOKEN=<Ваш Telegram Token>
 DATABASE_URL=postgresql://user:password@localhost/dbname
+```
 
